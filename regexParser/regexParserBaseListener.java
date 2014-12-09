@@ -19,6 +19,19 @@ public class regexParserBaseListener implements regexParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterRegex_string(@NotNull regexParserParser.Regex_stringContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitRegex_string(@NotNull regexParserParser.Regex_stringContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterStart(@NotNull regexParserParser.StartContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -26,6 +39,19 @@ public class regexParserBaseListener implements regexParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitStart(@NotNull regexParserParser.StartContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDouble_quote(@NotNull regexParserParser.Double_quoteContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDouble_quote(@NotNull regexParserParser.Double_quoteContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -52,6 +78,32 @@ public class regexParserBaseListener implements regexParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitExpr(@NotNull regexParserParser.ExprContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBetween_and(@NotNull regexParserParser.Between_andContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBetween_and(@NotNull regexParserParser.Between_andContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterChar_or_string(@NotNull regexParserParser.Char_or_stringContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitChar_or_string(@NotNull regexParserParser.Char_or_stringContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

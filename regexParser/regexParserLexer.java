@@ -17,20 +17,37 @@ public class regexParserLexer extends Lexer {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__1=1, T__0=2, CONST_ANYTHING=3, WS=4, SINGLE_CHAR=5;
+		T__2=1, T__1=2, T__0=3, CONST_ANYTHING=4, OP_BETWEEN=5, OP_AND=6, WS=7, 
+		SINGLE_CHAR=8, MULTIPLE_CHARS=9;
 	public static String[] modeNames = {
 		"DEFAULT_MODE"
 	};
 
 	public static final String[] tokenNames = {
 		"<INVALID>",
-		"'''", "';'", "CONST_ANYTHING", "WS", "SINGLE_CHAR"
+		"'''", "'\"'", "';'", "CONST_ANYTHING", "OP_BETWEEN", "OP_AND", "WS", 
+		"SINGLE_CHAR", "MULTIPLE_CHARS"
 	};
 	public static final String[] ruleNames = {
-		"T__1", "T__0", "CONST_ANYTHING", "WS", "SINGLE_CHAR"
+		"T__2", "T__1", "T__0", "CONST_ANYTHING", "OP_BETWEEN", "OP_AND", "WS", 
+		"SINGLE_CHAR", "MULTIPLE_CHARS"
 	};
 
 
+
+		public String regex = "";
+
+		public void add(String addition)
+		{
+			//System.out.println("Addition:" + addition);
+			regex += addition;
+			//System.out.println("Regex:" + regex);
+		}
+
+		public void printRegex()
+		{
+			System.out.println("Regex:" + regex);
+		}
 
 
 	public regexParserLexer(CharStream input) {
@@ -59,34 +76,40 @@ public class regexParserLexer extends Lexer {
 	@Override
 	public void action(RuleContext _localctx, int ruleIndex, int actionIndex) {
 		switch (ruleIndex) {
-		case 2: CONST_ANYTHING_action((RuleContext)_localctx, actionIndex); break;
+		case 3: CONST_ANYTHING_action((RuleContext)_localctx, actionIndex); break;
 
-		case 4: SINGLE_CHAR_action((RuleContext)_localctx, actionIndex); break;
+		case 7: SINGLE_CHAR_action((RuleContext)_localctx, actionIndex); break;
 		}
 	}
 	private void SINGLE_CHAR_action(RuleContext _localctx, int actionIndex) {
 		switch (actionIndex) {
-		case 1: System.out.print(getText()); break;
+		case 1: add(getText()); break;
 		}
 	}
 	private void CONST_ANYTHING_action(RuleContext _localctx, int actionIndex) {
 		switch (actionIndex) {
-		case 0: System.out.print(".*"); break;
+		case 0: add(".*"); break;
 		}
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\2\7&\b\1\4\2\t\2\4"+
-		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\3\2\3\2\3\3\3\3\3\4\3\4\3\4\3\4\3\4\3\4"+
-		"\3\4\3\4\3\4\3\4\3\4\3\5\6\5\36\n\5\r\5\16\5\37\3\5\3\5\3\6\3\6\3\6\2"+
-		"\2\7\3\3\5\4\7\5\t\6\13\7\3\2\4\5\2\13\f\17\17\"\"\3\2c|&\2\3\3\2\2\2"+
-		"\2\5\3\2\2\2\2\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\3\r\3\2\2\2\5\17\3\2"+
-		"\2\2\7\21\3\2\2\2\t\35\3\2\2\2\13#\3\2\2\2\r\16\7)\2\2\16\4\3\2\2\2\17"+
-		"\20\7=\2\2\20\6\3\2\2\2\21\22\7C\2\2\22\23\7P\2\2\23\24\7[\2\2\24\25\7"+
-		"V\2\2\25\26\7J\2\2\26\27\7K\2\2\27\30\7P\2\2\30\31\7I\2\2\31\32\3\2\2"+
-		"\2\32\33\b\4\2\2\33\b\3\2\2\2\34\36\t\2\2\2\35\34\3\2\2\2\36\37\3\2\2"+
-		"\2\37\35\3\2\2\2\37 \3\2\2\2 !\3\2\2\2!\"\b\5\3\2\"\n\3\2\2\2#$\t\3\2"+
-		"\2$%\b\6\4\2%\f\3\2\2\2\4\2\37\5\3\4\2\b\2\2\3\6\3";
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\2\13A\b\1\4\2\t\2\4"+
+		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\3\2\3\2"+
+		"\3\3\3\3\3\4\3\4\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\6\3\6\3"+
+		"\6\3\6\3\6\3\6\3\6\3\6\3\7\3\7\3\7\3\7\3\b\6\b\64\n\b\r\b\16\b\65\3\b"+
+		"\3\b\3\t\3\t\3\t\3\n\6\n>\n\n\r\n\16\n?\2\2\13\3\3\5\4\7\5\t\6\13\7\r"+
+		"\b\17\t\21\n\23\13\3\2\4\5\2\13\f\17\17\"\"\3\2c|B\2\3\3\2\2\2\2\5\3\2"+
+		"\2\2\2\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\2\r\3\2\2\2\2\17\3\2\2\2\2\21"+
+		"\3\2\2\2\2\23\3\2\2\2\3\25\3\2\2\2\5\27\3\2\2\2\7\31\3\2\2\2\t\33\3\2"+
+		"\2\2\13&\3\2\2\2\r.\3\2\2\2\17\63\3\2\2\2\219\3\2\2\2\23=\3\2\2\2\25\26"+
+		"\7)\2\2\26\4\3\2\2\2\27\30\7$\2\2\30\6\3\2\2\2\31\32\7=\2\2\32\b\3\2\2"+
+		"\2\33\34\7C\2\2\34\35\7P\2\2\35\36\7[\2\2\36\37\7V\2\2\37 \7J\2\2 !\7"+
+		"K\2\2!\"\7P\2\2\"#\7I\2\2#$\3\2\2\2$%\b\5\2\2%\n\3\2\2\2&\'\7d\2\2\'("+
+		"\7g\2\2()\7v\2\2)*\7y\2\2*+\7g\2\2+,\7g\2\2,-\7p\2\2-\f\3\2\2\2./\7c\2"+
+		"\2/\60\7p\2\2\60\61\7f\2\2\61\16\3\2\2\2\62\64\t\2\2\2\63\62\3\2\2\2\64"+
+		"\65\3\2\2\2\65\63\3\2\2\2\65\66\3\2\2\2\66\67\3\2\2\2\678\b\b\3\28\20"+
+		"\3\2\2\29:\t\3\2\2:;\b\t\4\2;\22\3\2\2\2<>\t\3\2\2=<\3\2\2\2>?\3\2\2\2"+
+		"?=\3\2\2\2?@\3\2\2\2@\24\3\2\2\2\5\2\65?\5\3\5\2\b\2\2\3\t\3";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

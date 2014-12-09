@@ -11,6 +11,17 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface regexParserListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by {@link regexParserParser#regex_string}.
+	 * @param ctx the parse tree
+	 */
+	void enterRegex_string(@NotNull regexParserParser.Regex_stringContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link regexParserParser#regex_string}.
+	 * @param ctx the parse tree
+	 */
+	void exitRegex_string(@NotNull regexParserParser.Regex_stringContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link regexParserParser#start}.
 	 * @param ctx the parse tree
 	 */
@@ -20,6 +31,17 @@ public interface regexParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStart(@NotNull regexParserParser.StartContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link regexParserParser#double_quote}.
+	 * @param ctx the parse tree
+	 */
+	void enterDouble_quote(@NotNull regexParserParser.Double_quoteContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link regexParserParser#double_quote}.
+	 * @param ctx the parse tree
+	 */
+	void exitDouble_quote(@NotNull regexParserParser.Double_quoteContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link regexParserParser#single_quote}.
@@ -42,6 +64,28 @@ public interface regexParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpr(@NotNull regexParserParser.ExprContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link regexParserParser#between_and}.
+	 * @param ctx the parse tree
+	 */
+	void enterBetween_and(@NotNull regexParserParser.Between_andContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link regexParserParser#between_and}.
+	 * @param ctx the parse tree
+	 */
+	void exitBetween_and(@NotNull regexParserParser.Between_andContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link regexParserParser#char_or_string}.
+	 * @param ctx the parse tree
+	 */
+	void enterChar_or_string(@NotNull regexParserParser.Char_or_stringContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link regexParserParser#char_or_string}.
+	 * @param ctx the parse tree
+	 */
+	void exitChar_or_string(@NotNull regexParserParser.Char_or_stringContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link regexParserParser#regex_char}.
