@@ -15,7 +15,7 @@ grammar regexParser;
 
 CONST_ANYTHING : ('ANYTHING') {System.out.print(".*");};
 WS : [ \t\r\n]+ -> skip ;
-SINGLE_CHAR : [a-z] {};
+SINGLE_CHAR : [a-z] {System.out.print(getText());};
 
 //---------------------------
 //     Parser Rules

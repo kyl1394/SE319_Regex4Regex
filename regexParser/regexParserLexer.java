@@ -66,7 +66,7 @@ public class regexParserLexer extends Lexer {
 	}
 	private void SINGLE_CHAR_action(RuleContext _localctx, int actionIndex) {
 		switch (actionIndex) {
-		case 1:  break;
+		case 1: System.out.print(getText()); break;
 		}
 	}
 	private void CONST_ANYTHING_action(RuleContext _localctx, int actionIndex) {
