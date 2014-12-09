@@ -55,6 +55,17 @@ public interface regexParserListener extends ParseTreeListener {
 	void exitSingle_quote(@NotNull regexParserParser.Single_quoteContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link regexParserParser#start_expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterStart_expr(@NotNull regexParserParser.Start_exprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link regexParserParser#start_expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitStart_expr(@NotNull regexParserParser.Start_exprContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link regexParserParser#expr}.
 	 * @param ctx the parse tree
 	 */
@@ -64,6 +75,17 @@ public interface regexParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpr(@NotNull regexParserParser.ExprContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link regexParserParser#end_expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterEnd_expr(@NotNull regexParserParser.End_exprContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link regexParserParser#end_expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitEnd_expr(@NotNull regexParserParser.End_exprContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link regexParserParser#between_and}.

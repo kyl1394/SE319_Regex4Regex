@@ -17,19 +17,19 @@ public class regexParserParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__2=1, T__1=2, T__0=3, CONST_ANYTHING=4, OP_BETWEEN=5, OP_AND=6, WS=7, 
-		SINGLE_CHAR=8, MULTIPLE_CHARS=9;
+		T__1=1, T__0=2, CONST_ANYTHING=3, CONST_START=4, CONST_END=5, OP_BETWEEN=6, 
+		THEN=7, OP_AND=8, WS=9, SINGLE_CHAR=10, MULTIPLE_CHARS=11;
 	public static final String[] tokenNames = {
-		"<INVALID>", "'''", "'\"'", "';'", "CONST_ANYTHING", "OP_BETWEEN", "OP_AND", 
-		"WS", "SINGLE_CHAR", "MULTIPLE_CHARS"
+		"<INVALID>", "'''", "'\"'", "CONST_ANYTHING", "CONST_START", "CONST_END", 
+		"OP_BETWEEN", "THEN", "OP_AND", "WS", "SINGLE_CHAR", "MULTIPLE_CHARS"
 	};
 	public static final int
-		RULE_start = 0, RULE_expr = 1, RULE_between_and = 2, RULE_regex_char = 3, 
-		RULE_regex_string = 4, RULE_char_or_string = 5, RULE_single_quote = 6, 
-		RULE_double_quote = 7;
+		RULE_start = 0, RULE_expr = 1, RULE_start_expr = 2, RULE_end_expr = 3, 
+		RULE_between_and = 4, RULE_regex_char = 5, RULE_regex_string = 6, RULE_char_or_string = 7, 
+		RULE_single_quote = 8, RULE_double_quote = 9;
 	public static final String[] ruleNames = {
-		"start", "expr", "between_and", "regex_char", "regex_string", "char_or_string", 
-		"single_quote", "double_quote"
+		"start", "expr", "start_expr", "end_expr", "between_and", "regex_char", 
+		"regex_string", "char_or_string", "single_quote", "double_quote"
 	};
 
 	@Override
@@ -49,18 +49,18 @@ public class regexParserParser extends Parser {
 
 
 
-		public String regex = "";
+		public static String regex = "(";
 
 		public void add(String addition)
 		{
-			//System.out.println("Addition:" + addition);
+			System.out.println("Addition:" + addition);
 			regex += addition;
-			//System.out.println("Regex:" + regex);
+			System.out.println("Regex:" + regex);
 		}
 
 		public void printRegex()
 		{
-			System.out.println("Regex:" + regex);
+			System.out.println("Regex:" + regex + ")");
 		}
 
 	public regexParserParser(TokenStream input) {
@@ -68,6 +68,7 @@ public class regexParserParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 	public static class StartContext extends ParserRuleContext {
+		public TerminalNode EOF() { return getToken(regexParserParser.EOF, 0); }
 		public ExprContext expr() {
 			return getRuleContext(ExprContext.class,0);
 		}
@@ -92,8 +93,8 @@ public class regexParserParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			{
-			setState(16); expr(0);
-			setState(17); match(3);
+			setState(20); expr(0);
+			setState(21); match(EOF);
 			printRegex();
 			}
 			}
@@ -110,6 +111,7 @@ public class regexParserParser extends Parser {
 	}
 
 	public static class ExprContext extends ParserRuleContext {
+		public TerminalNode THEN() { return getToken(regexParserParser.THEN, 0); }
 		public Regex_stringContext regex_string() {
 			return getRuleContext(Regex_stringContext.class,0);
 		}
@@ -152,28 +154,33 @@ public class regexParserParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(24);
+			setState(29);
 			switch (_input.LA(1)) {
 			case CONST_ANYTHING:
 				{
-				setState(21); match(CONST_ANYTHING);
+				setState(25); match(CONST_ANYTHING);
 				}
 				break;
 			case 1:
 				{
-				setState(22); regex_char();
+				setState(26); regex_char();
 				}
 				break;
 			case 2:
 				{
-				setState(23); regex_string();
+				setState(27); regex_string();
+				}
+				break;
+			case THEN:
+				{
+				setState(28); match(THEN);
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(30);
+			setState(35);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,1,_ctx);
 			while ( _alt!=2 && _alt!=-1 ) {
@@ -184,13 +191,13 @@ public class regexParserParser extends Parser {
 					{
 					_localctx = new ExprContext(_parentctx, _parentState);
 					pushNewRecursionContext(_localctx, _startState, RULE_expr);
-					setState(26);
-					if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
-					setState(27); expr(0);
+					setState(31);
+					if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
+					setState(32); expr(0);
 					}
 					} 
 				}
-				setState(32);
+				setState(37);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,1,_ctx);
 			}
@@ -203,6 +210,120 @@ public class regexParserParser extends Parser {
 		}
 		finally {
 			unrollRecursionContexts(_parentctx);
+		}
+		return _localctx;
+	}
+
+	public static class Start_exprContext extends ParserRuleContext {
+		public TerminalNode THEN() { return getToken(regexParserParser.THEN, 0); }
+		public TerminalNode CONST_START() { return getToken(regexParserParser.CONST_START, 0); }
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
+		public Start_exprContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_start_expr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof regexParserListener ) ((regexParserListener)listener).enterStart_expr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof regexParserListener ) ((regexParserListener)listener).exitStart_expr(this);
+		}
+	}
+
+	public final Start_exprContext start_expr() throws RecognitionException {
+		Start_exprContext _localctx = new Start_exprContext(_ctx, getState());
+		enterRule(_localctx, 4, RULE_start_expr);
+		try {
+			setState(43);
+			switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {
+			case 1:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(38); match(CONST_START);
+				setState(39); expr(0);
+				}
+				break;
+
+			case 2:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(40); match(CONST_START);
+				setState(41); match(THEN);
+				setState(42); expr(0);
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class End_exprContext extends ParserRuleContext {
+		public TerminalNode THEN() { return getToken(regexParserParser.THEN, 0); }
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
+		}
+		public TerminalNode CONST_END() { return getToken(regexParserParser.CONST_END, 0); }
+		public End_exprContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_end_expr; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof regexParserListener ) ((regexParserListener)listener).enterEnd_expr(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof regexParserListener ) ((regexParserListener)listener).exitEnd_expr(this);
+		}
+	}
+
+	public final End_exprContext end_expr() throws RecognitionException {
+		End_exprContext _localctx = new End_exprContext(_ctx, getState());
+		enterRule(_localctx, 6, RULE_end_expr);
+		try {
+			setState(51);
+			switch (_input.LA(1)) {
+			case 1:
+			case 2:
+			case CONST_ANYTHING:
+			case THEN:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(45); expr(0);
+				setState(46); match(CONST_END);
+				}
+				break;
+			case CONST_END:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(48); match(CONST_END);
+				setState(49); match(THEN);
+				setState(50); expr(0);
+				}
+				break;
+			default:
+				throw new NoViableAltException(this);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
 		}
 		return _localctx;
 	}
@@ -235,15 +356,15 @@ public class regexParserParser extends Parser {
 
 	public final Between_andContext between_and() throws RecognitionException {
 		Between_andContext _localctx = new Between_andContext(_ctx, getState());
-		enterRule(_localctx, 4, RULE_between_and);
+		enterRule(_localctx, 8, RULE_between_and);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(33); char_or_string();
-			setState(34); match(OP_BETWEEN);
-			setState(35); char_or_string();
-			setState(36); match(OP_AND);
-			setState(37); expr(0);
+			setState(53); char_or_string();
+			setState(54); match(OP_BETWEEN);
+			setState(55); char_or_string();
+			setState(56); match(OP_AND);
+			setState(57); expr(0);
 			}
 		}
 		catch (RecognitionException re) {
@@ -281,13 +402,13 @@ public class regexParserParser extends Parser {
 
 	public final Regex_charContext regex_char() throws RecognitionException {
 		Regex_charContext _localctx = new Regex_charContext(_ctx, getState());
-		enterRule(_localctx, 6, RULE_regex_char);
+		enterRule(_localctx, 10, RULE_regex_char);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(39); single_quote();
-			setState(40); match(SINGLE_CHAR);
-			setState(41); single_quote();
+			setState(59); single_quote();
+			setState(60); match(SINGLE_CHAR);
+			setState(61); single_quote();
 			}
 		}
 		catch (RecognitionException re) {
@@ -325,13 +446,13 @@ public class regexParserParser extends Parser {
 
 	public final Regex_stringContext regex_string() throws RecognitionException {
 		Regex_stringContext _localctx = new Regex_stringContext(_ctx, getState());
-		enterRule(_localctx, 8, RULE_regex_string);
+		enterRule(_localctx, 12, RULE_regex_string);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(43); double_quote();
-			setState(44); match(MULTIPLE_CHARS);
-			setState(45); double_quote();
+			setState(63); double_quote();
+			setState(64); match(MULTIPLE_CHARS);
+			setState(65); double_quote();
 			}
 		}
 		catch (RecognitionException re) {
@@ -368,20 +489,20 @@ public class regexParserParser extends Parser {
 
 	public final Char_or_stringContext char_or_string() throws RecognitionException {
 		Char_or_stringContext _localctx = new Char_or_stringContext(_ctx, getState());
-		enterRule(_localctx, 10, RULE_char_or_string);
+		enterRule(_localctx, 14, RULE_char_or_string);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(49);
+			setState(69);
 			switch (_input.LA(1)) {
 			case 1:
 				{
-				setState(47); regex_char();
+				setState(67); regex_char();
 				}
 				break;
 			case 2:
 				{
-				setState(48); regex_string();
+				setState(68); regex_string();
 				}
 				break;
 			default:
@@ -417,11 +538,11 @@ public class regexParserParser extends Parser {
 
 	public final Single_quoteContext single_quote() throws RecognitionException {
 		Single_quoteContext _localctx = new Single_quoteContext(_ctx, getState());
-		enterRule(_localctx, 12, RULE_single_quote);
+		enterRule(_localctx, 16, RULE_single_quote);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(51); match(1);
+			setState(71); match(1);
 			}
 		}
 		catch (RecognitionException re) {
@@ -452,11 +573,11 @@ public class regexParserParser extends Parser {
 
 	public final Double_quoteContext double_quote() throws RecognitionException {
 		Double_quoteContext _localctx = new Double_quoteContext(_ctx, getState());
-		enterRule(_localctx, 14, RULE_double_quote);
+		enterRule(_localctx, 18, RULE_double_quote);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(53); match(2);
+			setState(73); match(2);
 			}
 		}
 		catch (RecognitionException re) {
@@ -478,26 +599,31 @@ public class regexParserParser extends Parser {
 	}
 	private boolean expr_sempred(ExprContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 0: return precpred(_ctx, 1);
+		case 0: return precpred(_ctx, 2);
 		}
 		return true;
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\13:\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\3\2\3\2\3\2\3\2\3\3"+
-		"\3\3\3\3\3\3\5\3\33\n\3\3\3\3\3\7\3\37\n\3\f\3\16\3\"\13\3\3\4\3\4\3\4"+
-		"\3\4\3\4\3\4\3\5\3\5\3\5\3\5\3\6\3\6\3\6\3\6\3\7\3\7\5\7\64\n\7\3\b\3"+
-		"\b\3\t\3\t\3\t\2\3\4\n\2\4\6\b\n\f\16\20\2\2\65\2\22\3\2\2\2\4\32\3\2"+
-		"\2\2\6#\3\2\2\2\b)\3\2\2\2\n-\3\2\2\2\f\63\3\2\2\2\16\65\3\2\2\2\20\67"+
-		"\3\2\2\2\22\23\5\4\3\2\23\24\7\5\2\2\24\25\b\2\1\2\25\3\3\2\2\2\26\27"+
-		"\b\3\1\2\27\33\7\6\2\2\30\33\5\b\5\2\31\33\5\n\6\2\32\26\3\2\2\2\32\30"+
-		"\3\2\2\2\32\31\3\2\2\2\33 \3\2\2\2\34\35\f\3\2\2\35\37\5\4\3\2\36\34\3"+
-		"\2\2\2\37\"\3\2\2\2 \36\3\2\2\2 !\3\2\2\2!\5\3\2\2\2\" \3\2\2\2#$\5\f"+
-		"\7\2$%\7\7\2\2%&\5\f\7\2&\'\7\b\2\2\'(\5\4\3\2(\7\3\2\2\2)*\5\16\b\2*"+
-		"+\7\n\2\2+,\5\16\b\2,\t\3\2\2\2-.\5\20\t\2./\7\13\2\2/\60\5\20\t\2\60"+
-		"\13\3\2\2\2\61\64\5\b\5\2\62\64\5\n\6\2\63\61\3\2\2\2\63\62\3\2\2\2\64"+
-		"\r\3\2\2\2\65\66\7\3\2\2\66\17\3\2\2\2\678\7\4\2\28\21\3\2\2\2\5\32 \63";
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3\rN\4\2\t\2\4\3\t"+
+		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\3"+
+		"\2\3\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\5\3 \n\3\3\3\3\3\7\3$\n\3\f\3\16\3"+
+		"\'\13\3\3\4\3\4\3\4\3\4\3\4\5\4.\n\4\3\5\3\5\3\5\3\5\3\5\3\5\5\5\66\n"+
+		"\5\3\6\3\6\3\6\3\6\3\6\3\6\3\7\3\7\3\7\3\7\3\b\3\b\3\b\3\b\3\t\3\t\5\t"+
+		"H\n\t\3\n\3\n\3\13\3\13\3\13\2\3\4\f\2\4\6\b\n\f\16\20\22\24\2\2J\2\26"+
+		"\3\2\2\2\4\37\3\2\2\2\6-\3\2\2\2\b\65\3\2\2\2\n\67\3\2\2\2\f=\3\2\2\2"+
+		"\16A\3\2\2\2\20G\3\2\2\2\22I\3\2\2\2\24K\3\2\2\2\26\27\5\4\3\2\27\30\7"+
+		"\2\2\3\30\31\b\2\1\2\31\3\3\2\2\2\32\33\b\3\1\2\33 \7\5\2\2\34 \5\f\7"+
+		"\2\35 \5\16\b\2\36 \7\t\2\2\37\32\3\2\2\2\37\34\3\2\2\2\37\35\3\2\2\2"+
+		"\37\36\3\2\2\2 %\3\2\2\2!\"\f\4\2\2\"$\5\4\3\2#!\3\2\2\2$\'\3\2\2\2%#"+
+		"\3\2\2\2%&\3\2\2\2&\5\3\2\2\2\'%\3\2\2\2()\7\6\2\2).\5\4\3\2*+\7\6\2\2"+
+		"+,\7\t\2\2,.\5\4\3\2-(\3\2\2\2-*\3\2\2\2.\7\3\2\2\2/\60\5\4\3\2\60\61"+
+		"\7\7\2\2\61\66\3\2\2\2\62\63\7\7\2\2\63\64\7\t\2\2\64\66\5\4\3\2\65/\3"+
+		"\2\2\2\65\62\3\2\2\2\66\t\3\2\2\2\678\5\20\t\289\7\b\2\29:\5\20\t\2:;"+
+		"\7\n\2\2;<\5\4\3\2<\13\3\2\2\2=>\5\22\n\2>?\7\f\2\2?@\5\22\n\2@\r\3\2"+
+		"\2\2AB\5\24\13\2BC\7\r\2\2CD\5\24\13\2D\17\3\2\2\2EH\5\f\7\2FH\5\16\b"+
+		"\2GE\3\2\2\2GF\3\2\2\2H\21\3\2\2\2IJ\7\3\2\2J\23\3\2\2\2KL\7\4\2\2L\25"+
+		"\3\2\2\2\7\37%-\65G";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

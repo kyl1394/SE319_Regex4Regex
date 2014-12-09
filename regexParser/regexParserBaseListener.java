@@ -71,6 +71,19 @@ public class regexParserBaseListener implements regexParserListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterStart_expr(@NotNull regexParserParser.Start_exprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStart_expr(@NotNull regexParserParser.Start_exprContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterExpr(@NotNull regexParserParser.ExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -78,6 +91,19 @@ public class regexParserBaseListener implements regexParserListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitExpr(@NotNull regexParserParser.ExprContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterEnd_expr(@NotNull regexParserParser.End_exprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitEnd_expr(@NotNull regexParserParser.End_exprContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

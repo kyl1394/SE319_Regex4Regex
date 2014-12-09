@@ -7,7 +7,7 @@ grammar regexParser;
 //JAVA Code
 @members{
 
-	public String regex = "";
+	public static String regex = "(";
 
 	public void add(String addition)
 	{
@@ -18,7 +18,7 @@ grammar regexParser;
 
 	public void printRegex()
 	{
-		System.out.println("Regex:" + regex);
+		System.out.println("Regex:" + regex + ")");
 	}
 }
 
@@ -28,7 +28,10 @@ grammar regexParser;
 //---------------------------
 
 CONST_ANYTHING : ('ANYTHING') {add(".*");};
+CONST_START : ('START') {add("^");};
+CONST_END : ('END') {add("$");};
 OP_BETWEEN : ('between');
+THEN : ('then') {add(")(");};
 OP_AND : ('and');
 WS : [ \t\r\n]+ -> skip ;
 SINGLE_CHAR : [a-z] {add(getText());};
@@ -39,14 +42,24 @@ MULTIPLE_CHARS : [a-z]+ ;
 //---------------------------
 
 start:
-	(expr ';'{printRegex();})
-	;
-
+	(expr EOF {printRegex();})
+	; 
 expr:
 	CONST_ANYTHING
 	| regex_char
 	| regex_string
 	| expr expr
+	| THEN
+	;
+
+start_expr:
+	CONST_START expr
+	| CONST_START THEN expr
+	;
+
+end_expr:
+	expr CONST_END
+	| CONST_END THEN expr
 	;
 
 between_and:
