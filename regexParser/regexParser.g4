@@ -31,7 +31,8 @@ CONST_ANYTHING : ('ANYTHING') {add(".*");};
 CONST_START : ('START') {add("^");};
 CONST_END : ('END') {add("$");};
 OP_BETWEEN : ('between');
-THEN : ('then') {add(")(");};
+THEN : ('THEN') {add(")(");};
+NOT : ('NOT') {add("!");};
 OP_AND : ('and');
 WS : [ \t\r\n]+ -> skip ;
 SINGLE_CHAR : [a-z] {add(getText());};
@@ -44,12 +45,14 @@ MULTIPLE_CHARS : [a-z]+ ;
 start:
 	(expr EOF {printRegex();})
 	; 
+
 expr:
 	CONST_ANYTHING
 	| regex_char
 	| regex_string
 	| expr expr
 	| THEN
+	| NOT
 	;
 
 start_expr:
