@@ -62,14 +62,14 @@ WS : [ \t\r\n]+ -> skip ;
 SINGLE_CHAR : 'asdfa' {};
 MULTIPLE_CHARS : '"'~'"'+'"' {System.out.println("words");};
 
-QUIT : ';' {System.out.println("DONE! " + beginOperation);};
+QUIT : ';' {System.out.println("DONE! " + beginOperation); printRegex();};
 
 //---------------------------
 //     Parser Rules
 //---------------------------
 
 start:
-	(BEGIN_OP expr QUIT EOF {printRegex();})
+	(BEGIN_OP expr QUIT)
 	; 
 
 expr:
