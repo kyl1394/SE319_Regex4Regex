@@ -7,18 +7,37 @@ grammar regexParser;
 //JAVA Code
 @members{
 
+	public static boolean beginOperation = false;
+	public static Stack stack = new Stack();
+
 	public static String regex = "(";
 
 	public void add(String addition)
 	{
-		System.out.println("Addition:" + addition);
-		regex += addition;
-		System.out.println("Regex:" + regex);
+		if (beginOperation)
+		{
+			System.out.println("Addition:" + addition);
+			regex += addition;
+			System.out.println("Regex:" + regex);
+		}
 	}
 
 	public void printRegex()
 	{
-		System.out.println("Regex:" + regex + ")");
+		if (beginOperation)
+		{
+			System.out.println("Regex:" + regex + ")");
+		}
+		else
+		{
+			System.err.println("No valid expression detected. " + beginOperation);
+		}
+	}
+
+	public void begin()
+	{
+		beginOperation = true;
+		System.out.println("hit this: " + beginOperation);
 	}
 }
 
@@ -26,30 +45,36 @@ grammar regexParser;
 //---------------------------
 //     Lexer Rules
 //---------------------------
+BEGIN_OP : ('select') {begin(); System.out.println("SELECT");};
 
-CONST_ANYTHING : ('ANYTHING') {add(".*");};
-CONST_START : ('START') {add("^");};
-CONST_END : ('END') {add("$");};
-OP_BETWEEN : ('between');
-THEN : ('THEN') {add(")(");};
-NOT : ('NOT') {add("!");};
-OP_AND : ('and');
+CONST_ANYTHING : ('ANYTHING') {System.out.println("ANYTHING");};
+CONST_ALL : ('ALL') {System.out.println("ALL");};
+CONST_START : ('START') {};
+CONST_END : ('END') {};
+
+OP_BETWEEN : ('between') {System.out.println("BETWEEN");};
+OP_AND : ('and') {System.out.println("AND");};
+
+THEN : ('THEN') {};
+NOT : ('NOT') {};
+
 WS : [ \t\r\n]+ -> skip ;
-SINGLE_CHAR : [a-z] {add(getText());};
-MULTIPLE_CHARS : [a-z]+ ;
+SINGLE_CHAR : 'asdfa' {};
+MULTIPLE_CHARS : '"'~'"'+'"' {System.out.println("words");};
+
+QUIT : ';' {System.out.println("DONE! " + beginOperation);};
 
 //---------------------------
 //     Parser Rules
 //---------------------------
 
 start:
-	(expr EOF {printRegex();})
+	(BEGIN_OP expr QUIT EOF {printRegex();})
 	; 
 
 expr:
 	CONST_ANYTHING
-	| regex_char
-	| regex_string
+	| CONST_ALL
 	| expr expr
 	| THEN
 	| NOT
@@ -66,17 +91,7 @@ end_expr:
 	;
 
 between_and:
-	 char_or_string OP_BETWEEN char_or_string OP_AND expr;
-	
-
-regex_char:
-	single_quote SINGLE_CHAR single_quote;
-
-regex_string:
-	double_quote MULTIPLE_CHARS double_quote;
-
-char_or_string:
-	(regex_char | regex_string);
+	 OP_BETWEEN MULTIPLE_CHARS OP_AND MULTIPLE_CHARS;
 
 single_quote:
 	'\'';
