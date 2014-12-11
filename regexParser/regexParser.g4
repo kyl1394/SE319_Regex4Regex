@@ -43,6 +43,10 @@ grammar regexParser;
 		{
 			regex += param1 + "(.*)" + param2;
 		}
+		else
+		{
+			regex += param1 + textToFind.substring(nthOccurrence(textToFind, '"', 0)+1, nthOccurrence(textToFind, '"', 1)) + param2;
+		}
 	}
 
 	public void printRegex()
@@ -101,8 +105,8 @@ THEN : ('THEN') {};
 NOT : ('NOT') {};
 
 WS : [ \t\r\n]+ -> skip ;
-SINGLE_CHAR : 'asdfa' {};
-MULTIPLE_CHARS : '"'~'"'+'"' {System.out.println("words");};
+SINGLE_CHAR : '\''~'\''+'\'' {};
+MULTIPLE_CHARS : '"'~'"'+'"' {stack.push(getText());};
 
 QUIT : ';' {System.out.println("DONE!"); printRegex();};
 

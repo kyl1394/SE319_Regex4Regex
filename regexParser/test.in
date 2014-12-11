@@ -1,1 +1,1 @@
-select ALL between "<html>" and "</html>";
+select "cow" between "<html>" and "</html>";
