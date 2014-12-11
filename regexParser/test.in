@@ -1,1 +1,1 @@
-select "cow" between "<html>" and "</html>";
+select ALL between("<html"+all_until '>', "</html>");

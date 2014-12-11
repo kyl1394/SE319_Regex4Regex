@@ -16,3 +16,5 @@ regexParser/regexParserParser$StartContext.class
 regexParser/regexParserParser$Start_exprContext.class
 regexParser/regexParserParser.class
 regexParser/regexParserParser.java
+regexParser/regexParserParser$AdditionContext.class
+regexParser/regexParserParser$Between_funcContext.class
