@@ -10,18 +10,16 @@ grammar regexParser;
 	public static boolean beginOperation = false;
 	public static Stack stack = new Stack();
 
-	public static String regex = "(";
+	public static String regex = "";
 
 	public void add(String addition)
 	{
-		System.out.println("Addition:" + addition);
 		regex += addition;
 		System.out.println("Regex:" + regex);
 	}
 
 	public void pushToStack(String val)
 	{
-//		System.out.println("\n\nValue: " + val + "\n\n");
 		stack.push(val);
 	}
 
@@ -35,14 +33,17 @@ grammar regexParser;
 
 	public void insertParam(String param)
 	{
-		System.out.println("PARAM: " + param);
 		if (param == "ALL")
 		{
 			regex += "(.*)";
 		}
+		else if (param.contains("range "))
+		{
+			param = param.substring(nthOccurrence(param, '"', 0), nthOccurrence(param, '"', 1));
+			regex += "[" + param + "]";
+		}
 		else if (param.matches("\"[^\"]+\""))
 		{
-			System.out.println("you are a string!");
 			regex += param.substring(1, param.length()-1);
 //			regex += "\\b";
 		}
@@ -58,42 +59,79 @@ grammar regexParser;
 		}
 	}
 
-	public void performBetweenOP(String inputParams)
+	public void performOP(String inputParams, String opType)
 	{
-		String textToFind = String.valueOf(stack.pop());
-		Boolean searchParams = true;
-		
-		while(searchParams)
+		if (stack.isEmpty())
 		{
-			String param1 = inputParams.substring(nthOccurrence(inputParams, '(', 0)+1, inputParams.indexOf(',')); //more than just a string should be able to be passed into this function, meaning the user should be able to pass in "<xml" + ANY BEFORE ">" as valid input.
+			System.err.println("Syntax error seems to exist, or is not currenlty supported");
+			System.exit(1);
+		}
 
-			System.out.println(inputParams.charAt(nthOccurrence(inputParams, '"', 1)+1));
-			while (param1.length() != 0)
+		String textToFind = String.valueOf(stack.pop());
+		String param1 = "";
+		String param2 = "";
+
+		if (opType == "BETWEEN")
+		{
+			param1 = inputParams.substring(nthOccurrence(inputParams, '(', 0)+1, inputParams.indexOf(','));
+			param2 = inputParams.substring(nthOccurrence(inputParams, '"', 2), nthOccurrence(inputParams, '"', 3)+1);
+		}
+		else if (opType == "BEFORE")
+		{
+			param1 = inputParams.substring(nthOccurrence(inputParams, '"', 0), nthOccurrence(inputParams, '"', 1)+1);
+		}
+
+		while (param1.length() != 0)
+		{
+			if (param1.contains("+"))
 			{
-				if (param1.contains("+"))
+				insertParam(param1.substring(0, param1.indexOf('+')));
+				param1 = param1.substring(param1.indexOf('+')+1);
+				continue;
+			}
+			else
+			{
+				insertParam(param1);
+				param1 = "";
+			}
+		}
+
+		if (opType == "BETWEEN")
+		{
+			if (textToFind == "ALL")
+			{
+				regex += "(.*)";
+			}
+			else if (textToFind.contains("range"))
+			{
+				regex += "[" + textToFind.substring(nthOccurrence(textToFind, '"', 0)+1, nthOccurrence(textToFind, '"', 1)) + "]+";
+			}
+
+			while (param2.length() != 0)
+			{
+				if (param2.contains("+"))
 				{
-					insertParam(param1.substring(0, param1.indexOf('+')));
-					param1 = param1.substring(param1.indexOf('+')+1);
+					insertParam(param2.substring(0, param2.indexOf('+')));
+					param2 = param2.substring(param2.indexOf('+')+1);
 					continue;
 				}
 				else
 				{
-					insertParam(param1);
-					param1 = "";
+					insertParam(param2);
+					param2 = "";
 				}
 			}
-
-			String param2 = inputParams.substring(nthOccurrence(inputParams, '"', 2)+1, nthOccurrence(inputParams, '"', 3));
-
+		}
+		else if (opType == "BEFORE")
+		{
 			if (textToFind == "ALL")
 			{
-				regex += param1 + "(.*)" + param2;
+				regex = "(.*)(?=" + regex  + ")";
 			}
-			else
+			else if (textToFind.contains("range"))
 			{
-				regex += param1 + textToFind.substring(nthOccurrence(textToFind, '"', 0)+1, nthOccurrence(textToFind, '"', 1)) + param2;
+				regex = "[" + textToFind.substring(nthOccurrence(textToFind, '"', 0)+1, nthOccurrence(textToFind, '"', 1)) + "]+" + "(?=" + regex + ")";
 			}
-			searchParams = false;
 		}
 	}
 
@@ -103,20 +141,21 @@ grammar regexParser;
 
 		if (beginOperation)
 		{
-			System.out.println("\nBEGINNING");
-
 			while(!stack.isEmpty())
 			{
 				input = String.valueOf(stack.pop());
 
-//				System.out.println("while loop");
 				switch (input)
 				{
 				case "ALL":
 					break;
 
 				case "BETWEEN":
-					performBetweenOP(String.valueOf(stack.pop()));
+					performOP(String.valueOf(stack.pop()), "BETWEEN");
+					break;
+
+				case "BEFORE":
+					performOP(String.valueOf(stack.pop()), "BEFORE");
 					break;
 
 				default:
@@ -125,13 +164,14 @@ grammar regexParser;
 				}
 			}
 
-			System.out.println("Regex:" + regex + ")");
+			System.out.println("Regex: (" + regex + ")");
 			stack.clear();
 		}
-//		else
-//		{
-//			System.err.println("No valid expression detected.");
-//		}
+		else
+		{
+			System.err.println("No valid expression detected.");
+			System.exit(1);
+		}
 	}
 }
 
@@ -139,18 +179,21 @@ grammar regexParser;
 //---------------------------
 //     Lexer Rules
 //---------------------------
-BEGIN_OP : ('select') {beginOperation = true; System.out.println("SELECT");};
+BEGIN_OP : ('select') {beginOperation = true;};
 
-CONST_ANYTHING : ('ANYTHING') {System.out.println("ANYTHING");};
-CONST_ALL : ('ALL') {System.out.println("ALL"); pushToStack("ALL");};
+CONST_ANYTHING : ('ANYTHING') {};
+CONST_ALL : ('ALL') {pushToStack("ALL");};
 CONST_START : ('START') {};
 CONST_END : ('END') {};
 
 RPAREN : ')';
 LPAREN : '(';
+DQUOTE : '"';
+RANGE : ('range 'DQUOTE~'"'+DQUOTE) {pushToStack(getText());};
 
-OP_BETWEEN : ('between'LPAREN~')'+RPAREN) {System.out.println("BETWEEN"); pushToStack(getText()); pushToStack("BETWEEN");};
-OP_AND : ('and') {System.out.println("AND");};
+OP_BETWEEN : ('between'LPAREN~')'+RPAREN) {pushToStack(getText()); pushToStack("BETWEEN");};
+OP_BEFORE : ('before'LPAREN~')'+RPAREN) {pushToStack(getText()); pushToStack("BEFORE");};
+OP_AND : ('and') {};
 
 THEN : ('THEN') {};
 NOT : ('NOT') {};
@@ -160,7 +203,7 @@ SINGLE_CHAR : '\''~'\''+'\'' {};
 MULTIPLE_CHARS : ('"'~'"'+'"') {stack.push(getText());};
 
 
-QUIT : ';' {System.out.println("DONE!"); printRegex();};
+QUIT : ';' {printRegex();};
 
 //---------------------------
 //     Parser Rules
