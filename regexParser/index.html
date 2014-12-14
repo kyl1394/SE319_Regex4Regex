@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+
+<head>
+    <meta charset="utf-8">
+    <title>RegexGenerator</title>
+    <script src="jquery.js"></script>
+</head>
+
+    <script type = 'text/javascript'>
+        $(document).ready(function(){ 
+            
+            $('#submit').click(function(){
+                
+                var generatorString = $('#generatorText').val();
+                //console.log(generatorString);
+                var data = {
+                    generator: generatorString
+                }
+                $.ajax({
+                    type: "GET",
+                    url: "parse.php",
+                    dataType: "json",
+                    data: data,
+                }).done(function(data) {
+                    console.log(data);
+                    $('#container').html(data.regex);
+                });
+                
+            });
+
+
+        });
+    </script>
+
+<body>
+    <h1>Regex Generator</h1>
+    
+    <section class="container" id="Input">
+        
+        <textarea name='generatorText' id='generatorText' autofocus='autofocus'></textarea>
+        <button id='submit'>Generate</button>
+        <p id='container'><p>
+
+    </section>
+    
+</body>
+ 
+</html>
