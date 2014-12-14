@@ -77,11 +77,13 @@ grammar regexParser;
 		if (opType == "BETWEEN")
 		{
 			param1 = inputParams.substring(nthOccurrence(inputParams, '(', 0)+1, inputParams.indexOf(','));
-			param2 = inputParams.substring(nthOccurrence(inputParams, '"', 2), nthOccurrence(inputParams, '"', 3)+1);
+			param2 = inputParams.substring(inputParams.indexOf(','));
+			param2 = param2.substring(nthOccurrence(param2, '"', 0), nthOccurrence(param2, '"', 1)+1);
+
 		}
 		else if (opType == "BEFORE")
 		{
-			param1 = inputParams.substring(nthOccurrence(inputParams, '"', 0), nthOccurrence(inputParams, '"', 1)+1);
+			param1 = inputParams.substring(nthOccurrence(inputParams, '"', 0)+1, nthOccurrence(inputParams, '"', 1));
 		}
 
 		while (param1.length() != 0)
@@ -120,11 +122,11 @@ grammar regexParser;
 		}
 		else if (opType == "BEFORE")
 		{
-			System.out.println("TTF: " + textToFind);
 			regex = "&&TTF&&" + "(?=" + regex  + ")";
 		}
 	}
 
+	//WARNING: This function is for testing purposes only. It will destroy your stack.
 	public void printStack()
 	{
 		int i = 0;
