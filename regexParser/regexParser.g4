@@ -65,6 +65,7 @@ grammar regexParser;
 		}
 
 		String tempTextToFind = String.valueOf(stack.pop());
+		System.out.println("TempTextToFind = " + tempTextToFind);
 		String param1 = "";
 		String param2 = "";
 
@@ -116,6 +117,16 @@ grammar regexParser;
 		else if (opType == "BEFORE")
 		{
 			regex = textToFind + "(?=" + regex  + ")";
+		}
+	}
+
+	public void printStack()
+	{
+		int i = 0;
+		while (!stack.empty())
+		{
+			i++;
+			System.out.println(i + ": " + stack.pop())
 		}
 	}
 
