@@ -71,6 +71,24 @@ grammar regexParser;
 		String param1 = "";
 		String param2 = "";
 
+		String tempTextToFind = "";
+		while (textToFind.length() != 0)
+		{
+			if (textToFind.contains("+"))
+			{
+				tempTextToFind = tempTextToFind.concat(textToFind.substring(0, textToFind.indexOf('+')));
+				textToFind = textToFind.substring(textToFind.indexOf('+')+1);
+				continue;
+			}
+			else
+			{
+				tempTextToFind = tempTextToFind.concat(textToFind);
+				textToFind = "";
+			}
+		}
+		textToFind = tempTextToFind;
+		textToFind = replaceConstantsToRegex(textToFind);
+
 		if (opType == "BETWEEN")
 		{
 			param1 = inputParams.substring(nthOccurrence(inputParams, '(', 0)+1, inputParams.indexOf(','));
@@ -98,14 +116,7 @@ grammar regexParser;
 
 		if (opType == "BETWEEN")
 		{
-			if (textToFind == "ALL")
-			{
-				regex += "(.*)";
-			}
-			else if (textToFind.contains("range"))
-			{
-				regex += "[" + textToFind.substring(nthOccurrence(textToFind, '"', 0)+1, nthOccurrence(textToFind, '"', 1)) + "]+";
-			}
+			regex += textToFind;
 
 			while (param2.length() != 0)
 			{
@@ -116,23 +127,39 @@ grammar regexParser;
 					continue;
 				}
 				else
-				{
-					insertParam(param2);
+				{ insertParam(param2);
 					param2 = "";
 				}
 			}
 		}
 		else if (opType == "BEFORE")
 		{
-			if (textToFind == "ALL")
-			{
-				regex = "(.*)(?=" + regex  + ")";
-			}
-			else if (textToFind.contains("range"))
-			{
-				regex = "[" + textToFind.substring(nthOccurrence(textToFind, '"', 0)+1, nthOccurrence(textToFind, '"', 1)) + "]+" + "(?=" + regex + ")";
-			}
+			regex = textToFind + "(?=" + regex  + ")";
 		}
+	}
+
+	public String replaceConstantsToRegex(String var)
+	{
+		System.out.println("GOING TO REPLACE ALL CONSTANTS NOOOWWWW: String = " + var);
+
+		if (var.contains("ALL"))
+			var.replaceAll("ALL", "(.*)");
+
+		while (var.contains("range"))
+		{
+			int startLocation = var.indexOf("range");
+			String workableString = var.substring(startLocation);
+			int endLocation = startLocation + nthOccurrence(workableString, '"', 1);
+			String regexx = "[" + workableString.substring(nthOccurrence(workableString, '"', 0)+1, nthOccurrence(workableString, '"', 1)) + "]+" + "(?=" + regex + ")";
+
+			String endStuff = var.substring(endLocation);
+			String startStuff = var.substring(0, startLocation);
+			var = startStuff + regexx + endStuff;
+			System.out.println("current range:  " + var);
+		}
+		System.out.println("COMPLETE!! returning: " + var);
+
+		return var;
 	}
 
 	public void printRegex()
@@ -181,7 +208,6 @@ grammar regexParser;
 //---------------------------
 BEGIN_OP : ('select') {beginOperation = true;};
 
-CONST_ANYTHING : ('ANYTHING') {};
 CONST_ALL : ('ALL') {pushToStack("ALL");};
 CONST_START : ('START') {};
 CONST_END : ('END') {};
@@ -214,8 +240,7 @@ start:
 	; 
 
 expr:
-	CONST_ANYTHING
-	| expr expr
+	expr expr
 	| THEN
 	| NOT
 	| addition
