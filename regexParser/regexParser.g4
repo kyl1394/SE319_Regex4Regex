@@ -142,9 +142,13 @@ grammar regexParser;
 		if (var.contains("ALL"))
 			var.replaceAll("ALL", "(.*)");
 
-		while (var.contains("range"))
+		if (var.contains("range"))
 		{
 			var = "[" + var.substring(nthOccurrence(var, '"', 0)+1, nthOccurrence(var, '"', 1)) + "]+";
+		}
+		else if (var.contains("beforeChar"))
+		{
+			var = "(?=" + var.substring(nthOccurrence(var, '"', 0)+1, nthOccurrence(var, '"', 1)) + ")";
 		}
 
 		return var;
@@ -213,6 +217,7 @@ RPAREN : ')';
 LPAREN : '(';
 DQUOTE : '"';
 RANGE : ('range 'DQUOTE~'"'+DQUOTE) {pushToStack(getText()); pushToStack("TextToFind");};
+BEFORECHAR : ('beforeChar 'DQUOTE~'"'+DQUOTE) {pushToStack(getText()); pushToStack("TextToFind");};
 
 OP_BETWEEN : ('between'LPAREN~')'+RPAREN) {pushToStack(getText()); pushToStack("BETWEEN");};
 OP_BEFORE : ('before'LPAREN~')'+RPAREN) {pushToStack(getText()); pushToStack("BEFORE");};
