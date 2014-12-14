@@ -12,11 +12,6 @@ grammar regexParser;
 
 	public static String regex = "";
 
-	public void add(String addition)
-	{
-		regex += addition;
-		System.out.println("Regex:" + regex);
-	}
 
 	public void pushToStack(String val)
 	{
@@ -59,6 +54,8 @@ grammar regexParser;
 		}
 	}
 
+
+	String textToFind = "";
 	public void performOP(String inputParams, String opType)
 	{
 		if (stack.isEmpty())
@@ -67,18 +64,26 @@ grammar regexParser;
 			System.exit(1);
 		}
 
-		String textToFind = String.valueOf(stack.pop());
+		String tempTextToFind = "";
+		if (opType == "TextToFind")
+		{
+			tempTextToFind = String.valueOf(stack.pop());
+			textToFind = replaceConstantsToRegex(tempTextToFind) + textToFind; //Must be in this order because stack push/pop
+		}
+
 		String param1 = "";
 		String param2 = "";
 
 		if (opType == "BETWEEN")
 		{
 			param1 = inputParams.substring(nthOccurrence(inputParams, '(', 0)+1, inputParams.indexOf(','));
-			param2 = inputParams.substring(nthOccurrence(inputParams, '"', 2), nthOccurrence(inputParams, '"', 3)+1);
+			param2 = inputParams.substring(inputParams.indexOf(','));
+			param2 = param2.substring(nthOccurrence(param2, '"', 0), nthOccurrence(param2, '"', 1)+1);
+
 		}
 		else if (opType == "BEFORE")
 		{
-			param1 = inputParams.substring(nthOccurrence(inputParams, '"', 0), nthOccurrence(inputParams, '"', 1)+1);
+			param1 = inputParams.substring(nthOccurrence(inputParams, '"', 0)+1, nthOccurrence(inputParams, '"', 1));
 		}
 
 		while (param1.length() != 0)
@@ -98,14 +103,7 @@ grammar regexParser;
 
 		if (opType == "BETWEEN")
 		{
-			if (textToFind == "ALL")
-			{
-				regex += "(.*)";
-			}
-			else if (textToFind.contains("range"))
-			{
-				regex += "[" + textToFind.substring(nthOccurrence(textToFind, '"', 0)+1, nthOccurrence(textToFind, '"', 1)) + "]+";
-			}
+			regex += "&&TTF&&";
 
 			while (param2.length() != 0)
 			{
@@ -116,7 +114,7 @@ grammar regexParser;
 					continue;
 				}
 				else
-				{
+				{ 
 					insertParam(param2);
 					param2 = "";
 				}
@@ -124,15 +122,36 @@ grammar regexParser;
 		}
 		else if (opType == "BEFORE")
 		{
-			if (textToFind == "ALL")
-			{
-				regex = "(.*)(?=" + regex  + ")";
-			}
-			else if (textToFind.contains("range"))
-			{
-				regex = "[" + textToFind.substring(nthOccurrence(textToFind, '"', 0)+1, nthOccurrence(textToFind, '"', 1)) + "]+" + "(?=" + regex + ")";
-			}
+			regex = "&&TTF&&" + "(?=" + regex  + ")";
 		}
+	}
+
+	//WARNING: This function is for testing purposes only. It will destroy your stack.
+	public void printStack()
+	{
+		int i = 0;
+		while (!stack.empty())
+		{
+			i++;
+			System.out.println(i + ": " + stack.pop());
+		}
+	}
+
+	public String replaceConstantsToRegex(String var)
+	{
+		if (var.contains("ALL"))
+			var.replaceAll("ALL", "(.*)");
+
+		if (var.contains("range"))
+		{
+			var = "[" + var.substring(nthOccurrence(var, '"', 0)+1, nthOccurrence(var, '"', 1)) + "]+";
+		}
+		else if (var.contains("beforeChar"))
+		{
+			var = "(?=" + var.substring(nthOccurrence(var, '"', 0)+1, nthOccurrence(var, '"', 1)) + ")";
+		}
+
+		return var;
 	}
 
 	public void printRegex()
@@ -141,6 +160,7 @@ grammar regexParser;
 
 		if (beginOperation)
 		{
+			//printStack();
 			while(!stack.isEmpty())
 			{
 				input = String.valueOf(stack.pop());
@@ -158,12 +178,20 @@ grammar regexParser;
 					performOP(String.valueOf(stack.pop()), "BEFORE");
 					break;
 
+				case "TextToFind":
+					performOP("", "TextToFind");
+					break;
+
 				default:
 					System.err.println("Unrecognized input: " + input);
 					break;
 				}
 			}
 
+			if (regex.length() == 0)
+				regex = textToFind;
+
+			regex = regex.replaceAll("&&TTF&&", textToFind);
 			System.out.println("Regex: (" + regex + ")");
 			stack.clear();
 		}
@@ -181,7 +209,6 @@ grammar regexParser;
 //---------------------------
 BEGIN_OP : ('select') {beginOperation = true;};
 
-CONST_ANYTHING : ('ANYTHING') {};
 CONST_ALL : ('ALL') {pushToStack("ALL");};
 CONST_START : ('START') {};
 CONST_END : ('END') {};
@@ -189,7 +216,8 @@ CONST_END : ('END') {};
 RPAREN : ')';
 LPAREN : '(';
 DQUOTE : '"';
-RANGE : ('range 'DQUOTE~'"'+DQUOTE) {pushToStack(getText());};
+RANGE : ('range 'DQUOTE~'"'+DQUOTE) {pushToStack(getText()); pushToStack("TextToFind");};
+BEFORECHAR : ('beforeChar 'DQUOTE~'"'+DQUOTE) {pushToStack(getText()); pushToStack("TextToFind");};
 
 OP_BETWEEN : ('between'LPAREN~')'+RPAREN) {pushToStack(getText()); pushToStack("BETWEEN");};
 OP_BEFORE : ('before'LPAREN~')'+RPAREN) {pushToStack(getText()); pushToStack("BEFORE");};
@@ -200,7 +228,7 @@ NOT : ('NOT') {};
 
 WS : [ \t\r\n]+ -> skip ;
 SINGLE_CHAR : '\''~'\''+'\'' {};
-MULTIPLE_CHARS : ('"'~'"'+'"') {stack.push(getText());};
+MULTIPLE_CHARS : ('"'~'"'+'"') {pushToStack(getText()); pushToStack("TextToFind");};
 
 
 QUIT : ';' {printRegex();};
@@ -214,8 +242,7 @@ start:
 	; 
 
 expr:
-	CONST_ANYTHING
-	| expr expr
+	expr expr
 	| THEN
 	| NOT
 	| addition
