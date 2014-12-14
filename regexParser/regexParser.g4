@@ -64,12 +64,15 @@ grammar regexParser;
 			System.exit(1);
 		}
 
-		String tempTextToFind = String.valueOf(stack.pop());
-		System.out.println("TempTextToFind = " + tempTextToFind);
+		String tempTextToFind = "";
+		if (opType == "TextToFind")
+		{
+			tempTextToFind = String.valueOf(stack.pop());
+			textToFind = replaceConstantsToRegex(tempTextToFind) + textToFind; //Must be in this order because stack push/pop
+		}
+
 		String param1 = "";
 		String param2 = "";
-
-		textToFind = replaceConstantsToRegex(tempTextToFind) + textToFind; //Must be in this order because stack push/pop
 
 		if (opType == "BETWEEN")
 		{
@@ -98,7 +101,7 @@ grammar regexParser;
 
 		if (opType == "BETWEEN")
 		{
-			regex += textToFind;
+			regex += "&&TTF&&";
 
 			while (param2.length() != 0)
 			{
@@ -109,14 +112,16 @@ grammar regexParser;
 					continue;
 				}
 				else
-				{ insertParam(param2);
+				{ 
+					insertParam(param2);
 					param2 = "";
 				}
 			}
 		}
 		else if (opType == "BEFORE")
 		{
-			regex = textToFind + "(?=" + regex  + ")";
+			System.out.println("TTF: " + textToFind);
+			regex = "&&TTF&&" + "(?=" + regex  + ")";
 		}
 	}
 
@@ -126,7 +131,7 @@ grammar regexParser;
 		while (!stack.empty())
 		{
 			i++;
-			System.out.println(i + ": " + stack.pop())
+			System.out.println(i + ": " + stack.pop());
 		}
 	}
 
@@ -149,6 +154,7 @@ grammar regexParser;
 
 		if (beginOperation)
 		{
+			//printStack();
 			while(!stack.isEmpty())
 			{
 				input = String.valueOf(stack.pop());
@@ -179,6 +185,7 @@ grammar regexParser;
 			if (regex.length() == 0)
 				regex = textToFind;
 
+			regex = regex.replaceAll("&&TTF&&", textToFind);
 			System.out.println("Regex: (" + regex + ")");
 			stack.clear();
 		}
