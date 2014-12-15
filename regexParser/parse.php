@@ -16,8 +16,7 @@
     
     echo json_encode(
         
-        array(
-            
+        array(      
             'regex' => htmlspecialchars($filetext)
         )
     ); 
