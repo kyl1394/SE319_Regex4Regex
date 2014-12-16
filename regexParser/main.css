@@ -1,0 +1,24 @@
+* {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+textarea{
+    text-align: left;
+    height:75px;
+    width:300px;
+}
+
+button {
+    display: block;
+}
+
+html{
+    background-color: #B7AFA3 ; 
+    color: #6D929B;
+}
+
+p {
+    color: #F5FAFA;
+}
