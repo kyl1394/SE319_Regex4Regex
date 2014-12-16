@@ -140,7 +140,7 @@ grammar regexParser;
 	public String replaceConstantsToRegex(String var)
 	{
 		if (var.contains("ALL"))
-			var.replaceAll("ALL", "(.*)");
+			var = var.replaceAll("ALL", "(.*)");
 
 		if (var.contains("range"))
 		{
@@ -209,7 +209,7 @@ grammar regexParser;
 //---------------------------
 BEGIN_OP : ('select') {beginOperation = true;};
 
-CONST_ALL : ('ALL') {pushToStack("ALL");};
+CONST_ALL : ('ALL') {pushToStack("ALL"); pushToStack("TextToFind");};
 CONST_START : ('START') {};
 CONST_END : ('END') {};
 
